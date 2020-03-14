@@ -1,0 +1,14 @@
+[log]
+  level = "DEBUG"
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+  [entryPoints.https]
+  address = ":443"
+[providers.file]
+  filename = "/etc/traefik/traefik-sites.toml"
+[certificatesResolvers.letsencrypt.acme]
+  email = "mymail@domain1.xy"
+  storage = "acme.json"
+  [certificatesResolvers.letsencrypt.acme.httpChallenge]
+  entryPoint = "http"
