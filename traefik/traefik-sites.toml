@@ -6,6 +6,7 @@
     permanent = true
   # routers
   [http.routers]
+######## here starts the "router stuff" ############
   [http.routers.router_[domain1docker]_http]
      entrypoints = ['http']
      service = 'service-[domain1docker]'
@@ -19,10 +20,13 @@
      certresolver = 'letsencrypt'
      [[http.routers.router_[domain1docker]_https.tls.domains]]
      main = '[domain1serverURL]'
+######## here ends the "router stuff" ############
 
   # Add the services
   [http.services]
+######## here starts the "service stuff" ############
     [http.services.service-domain1]
     [http.services.service-domain1.loadBalancer]
       [[http.services.service-domain1.loadBalancer.servers]]
       url = 'http://[domain1docker]'
+######## here ends the "service stuff" ############
