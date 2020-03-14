@@ -25,6 +25,7 @@ So this repository contains the following things:
 - docker tipps for using the whole thing with namespaced docker and minimum capabilities (both for security reasons)
 
 ## traefik templates
+(copy them from here or take the files from the "traefik" folder)
 
 ### traefik.toml
 	[log]
