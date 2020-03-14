@@ -12,17 +12,17 @@ the ACMEv1 protocol. You should upgrade to an ACMEv2 compatible client before
 then, or certificate issuance will fail. For most people, simply upgrading to
 the latest version of your existing client will suffice.
 
-Well, as I said above I was using traefik together with letsencrypt for automatic renewal of SSL certificates. You should also know that I serving multiple websites on my server, and that I am using docker with namespaces for [security reasons](https://docs.docker.com/engine/security/userns-remap/). Using docker with namespaces forced me to use a complete static traefik v1 config, using docker compose with automatic detection of services is not possible.
+Well, as I said above I was using traefik together with letsencrypt for automatic renewal of SSL certificates. You should also know that I am serving multiple websites on my server, and that I am using docker with namespaces for [security reasons](https://docs.docker.com/engine/security/userns-remap/). Using docker with namespaces forced me to use a complete static traefik v1 config, using docker compose with automatic detection of services (via /var/run/docker.sock) is not possible.
 
-Sadly a "simple update" to traefik v2 was not that simple. Some major principles [changed](https://docs.traefik.io/migration/v1-to-v2/) and I therefore had to invest quiet a few hours to figure out how to get things working.
+Sadly a "simple update" to traefik v2 was not that simple. Some major things [changed](https://docs.traefik.io/migration/v1-to-v2/) and I therefore had to invest quiet a few hours to figure out how to get things working again.
 
 So this repository contains the following things:
 
-- traefik v2 config template with two TOML files (traefik.toml and traefik-sites.toml)
+- a traefik v2 config template with two TOML files (traefik.toml and traefik-sites.toml) with:
   - automatic redirection from HTTP to HTTPS
   - automatic SSL certificate generation with letsencrypt (ACMEv2 protocol as v1 support will go away soon)
 - for a little more comfort a libre office calc document is included where you only need to enter the name of the docker container and the domain name and the relevant traefik config is generated
-- docker tipps for using the whole thing with namespaced docker and minimum capabilities (both for security reasons)
+- some docker tipps for using the whole thing with namespaced docker and minimum capabilities (both for security reasons)
 
 ## traefik templates
 (copy them from here or take the files from the "traefik" folder)
@@ -85,7 +85,7 @@ So this repository contains the following things:
 
 Here are some examplary docker commands which I used to try out my config with two subdomains:
 
-    #first star two simple nginx websites. Note the docker container names "domain1" and "domain2".
+    #first start two simple nginx websites. Note the docker container names "domain1" and "domain2".
     docker run --name domain1 -d --memory=100m -v /var/www/v1:/usr/share/nginx/html:ro -d nginx:1.13-alpine
     docker run --name domain2 -d --memory=100m -v /var/www/v1:/usr/share/nginx/html:ro -d nginx:1.13-alpine
 
