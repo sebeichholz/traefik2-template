@@ -22,7 +22,65 @@ So this repository contains the following things:
   - automatic redirection from HTTP to HTTPS
   - automatic SSL certificate generation with letsencrypt (ACMEv2 protocol as v1 support will go away soon)
 - for a little more comfort a libre office calc document is included where you only need to enter the name of the docker container and the domain name and the relevant traefik config is generated
+- docker tipps for using the whole thing with namespaced docker and minimum capabilities (both for security reasons)
 
+## traefik templates
+
+### traefik.toml
+	[log]
+	  level = "DEBUG"
+	[entryPoints]
+	  [entryPoints.http]
+		address = ":80"
+	  [entryPoints.https]
+		address = ":443"
+	[providers.file]
+	  filename = "/etc/traefik/traefik-sites.toml"
+	[certificatesResolvers.letsencrypt.acme]
+	  email = "mymail@domain1.xy"
+	  storage = "acme.json"
+	  [certificatesResolvers.letsencrypt.acme.httpChallenge]
+		entryPoint = "http"
+    
+    
+### traefik-sites.toml
+
+	[http]
+	  # Redirect to https
+	  [http.middlewares]
+		[http.middlewares.httpsredirect.redirectScheme]
+		  scheme = https
+		  permanent = true
+	  # routers
+	  [http.routers]
+		[http.routers.router_[domain1docker]_http]
+		   entrypoints = ['http']
+		   service = 'service-[domain1docker]'
+		   middlewares = ['httpsredirect']
+		   rule = 'host(`[domain1serverURL]`)'
+		 [http.routers.router_[domain1docker]_https]
+		   entrypoints = ['https','http']
+		   service = 'service-[domain1docker]'
+		   rule = 'host(`dev.domain1.xy`)'
+		   [http.routers.router_[domain1docker]_https.tls]
+			 certresolver = 'letsencrypt'
+			 [[http.routers.router_[domain1docker]_https.tls.domains]]
+			 main = '[domain1serverURL]'
+       
+		# Add the services
+		[http.services]
+		  [http.services.service-domain1]
+			[http.services.service-domain1.loadBalancer]
+			  [[http.services.service-domain1.loadBalancer.servers]]
+				url = 'http://[domain1docker]'
+
+## using the template files
+- change the mail address in traefik.toml to your address
+- replace [domain1serverURL] in traefik-sites.toml with the docker container name (must not contain '.')
+- replace [domain1serverURL] in traefik-sites.toml with the website mein URL (e.g. www.mydomain.xy)
+
+
+## docker tipps
 
 Here are some examplary docker commands which I used to try out my config with two subdomains:
 
