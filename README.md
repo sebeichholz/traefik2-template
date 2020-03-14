@@ -31,7 +31,11 @@ Here are some examplary docker commands which I used to try out my config with t
     docker run --name domain2 -d --memory=100m -v /var/www/v1:/usr/share/nginx/html:ro -d nginx:1.13-alpine
 
     #create and start traefik with docker and minimal capabilities
-    docker run --name traefik -d -p 80:80 -p 443:443 --memory=100m --cap-drop=all --cap-add=NET_BIND_SERVICE -v /docker/traefik/traefik.toml:/etc/traefik/traefik.toml -v /docker/traefik/traefik-sites.toml:/etc/traefik/traefik-sites.toml traefik:2.1.6
+    docker run --name traefik -d -p 80:80 -p 443:443 \
+      --memory=100m --cap-drop=all --cap-add=NET_BIND_SERVICE \
+      -v /docker/traefik/traefik.toml:/etc/traefik/traefik.toml \
+      -v /docker/traefik/traefik-sites.toml:/etc/traefik/traefik-sites.toml \
+      traefik:2.1.6
 
     #create docker network for internal communication and connect everything:
     docker network create traefik
